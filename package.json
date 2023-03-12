@@ -1,0 +1,21 @@
+{
+	"name": "imessage-graphql",
+	"version": "1.0.0",
+	"scripts": {
+		"install:client": "npm --prefix ./client install",
+		"prisma-generate:client": "npm --prefix ./client run prisma-generate",
+		"dev:client": "npm --prefix ./client run dev",
+		"install:server": "npm --prefix ./server install",
+		"prisma-generate:server": "npm --prefix ./server run prisma-generate",
+		"dev:server": "npm --prefix ./server run dev",
+		"install": "concurrently \"npm run install:server\" \"npm run install:client\"",
+		"prisma-generate": "concurrently \"npm run prisma-generate:server\" \"npm run prisma-generate:client\"",
+		"dev": "concurrently \"npm run dev:server\" \"npm run dev:client\"",
+		"prettier-lint": "prettier -c .",
+		"prettier-format": "prettier -w ."
+	},
+	"devDependencies": {
+		"concurrently": "^7.6.0",
+		"prettier": "^2.8.4"
+	}
+}

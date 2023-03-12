@@ -1,0 +1,25 @@
+const typeDefs = `#graphql
+	type Query {
+		searchUsers(username: String): [User]
+	}
+
+	type Mutation {
+		createUsername(username: String): CreateUsernameResponse
+	}
+
+	type CreateUsernameResponse {
+		error: String
+		success: Boolean
+	}
+
+	type User {
+		id: String
+		email: String
+		emailVerified: Boolean
+		image: String
+		name: String
+		username: String
+	}
+`;
+
+export default typeDefs;
