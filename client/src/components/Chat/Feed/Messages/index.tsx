@@ -44,7 +44,10 @@ const Messages: React.FC<MessagesProps> = ({ conversationId, userId }) => {
 
 				return {
 					...prev,
-					getMessages: [newMessage, ...prev.getMessages],
+					getMessages:
+						newMessage.sender.id !== userId
+							? [newMessage, ...prev.getMessages]
+							: prev.getMessages,
 				};
 			},
 		});

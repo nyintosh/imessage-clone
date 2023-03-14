@@ -45,7 +45,7 @@ export type GetMessagesArgs = {
 	conversationId: string;
 };
 
-export type SendMEssageData = {
+export type SendMessageData = {
 	sendMessage: boolean;
 };
 

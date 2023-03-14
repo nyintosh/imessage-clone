@@ -154,7 +154,6 @@ const resolvers = {
 				(
 					payload: SentMessageSubscriptionPayload,
 					args: { conversationId: string },
-					context: GraphQLContext,
 				) => {
 					return payload.messageSent.conversationId === args.conversationId;
 				},

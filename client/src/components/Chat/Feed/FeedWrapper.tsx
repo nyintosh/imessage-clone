@@ -25,7 +25,7 @@ const FeedWrapper: React.FC = () => {
 
 					<Messages conversationId={conversationId} userId={userId} />
 
-					<MessagesInput conversationId={conversationId} userId={userId} />
+					<MessagesInput conversationId={conversationId} session={session!} />
 				</>
 			) : (
 				<Text>No conversation selected.</Text>

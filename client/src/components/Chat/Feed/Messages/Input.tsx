@@ -1,21 +1,31 @@
 import MessageOperations from '@/graphql/operations/message';
-import { SendMessageArgs, SendMEssageData } from '@/utils/types';
+import {
+	GetMessagesArgs,
+	GetMessagesData,
+	SendMessageArgs,
+	SendMessageData,
+} from '@/utils/types';
 import { useMutation } from '@apollo/client';
 import { Box, Input } from '@chakra-ui/react';
 import ObjectID from 'bson-objectid';
+import { Session } from 'next-auth';
 import { useState } from 'react';
 import { toast } from 'react-hot-toast';
 
 type MessagesInputProps = {
 	conversationId: string;
-	userId: string;
+	session: Session;
 };
 
 const MessagesInput: React.FC<MessagesInputProps> = ({
 	conversationId,
-	userId,
+	session,
 }) => {
-	const [sendMessage] = useMutation<SendMEssageData, SendMessageArgs>(
+	const {
+		user: { id: userId, image: userImage, username },
+	} = session!;
+
+	const [sendMessage] = useMutation<SendMessageData, SendMessageArgs>(
 		MessageOperations.Mutation.sendMessage,
 	);
 
@@ -28,9 +38,11 @@ const MessagesInput: React.FC<MessagesInputProps> = ({
 			const newMessage: SendMessageArgs = {
 				id: ObjectID().toHexString(),
 				conversationId,
-				senderId: userId,
+				senderId: session.user.id,
 				body,
 			};
+
+			setBody('');
 
 			const { errors } = await sendMessage({
 				variables: {
@@ -40,10 +52,32 @@ const MessagesInput: React.FC<MessagesInputProps> = ({
 					sendMessage: true,
 				},
 				update: (cache) => {
-					/**
-					 * TODO:
-					 * setup cache
-					 */
+					const query = MessageOperations.Query.getMessages;
+
+					const prev = cache.readQuery<GetMessagesData>({
+						query,
+						variables: { conversationId },
+					}) as GetMessagesData;
+
+					cache.writeQuery<GetMessagesData, GetMessagesArgs>({
+						query,
+						variables: { conversationId },
+						data: {
+							getMessages: [
+								{
+									id: newMessage.id,
+									sender: {
+										id: userId,
+										image: userImage,
+										username,
+									},
+									body: newMessage.body,
+									createdAt: new Date(),
+								},
+								...prev.getMessages,
+							],
+						},
+					});
 				},
 			});
 
@@ -56,8 +90,6 @@ const MessagesInput: React.FC<MessagesInputProps> = ({
 			console.log(`onSendMessage() - Error: ${err?.message}`);
 			toast.error(err?.message);
 		}
-
-		setBody('');
 	};
 
 	return (
