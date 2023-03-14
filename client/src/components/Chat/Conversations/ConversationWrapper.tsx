@@ -6,11 +6,14 @@ import {
 } from '@/utils/types';
 import { useQuery } from '@apollo/client';
 import { Box } from '@chakra-ui/react';
+import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
 import ConversationList from './ConversationList';
 
 const ConversationWrapper: React.FC = () => {
+	const { data: session } = useSession();
+
 	const router = useRouter();
 
 	const { subscribeToMore, data, loading } = useQuery<GetConversationsData>(
@@ -40,12 +43,19 @@ const ConversationWrapper: React.FC = () => {
 		subscribeToNewConversations();
 	}, []);
 
-	const onViewConversation = async (conversationId: string) => {
+	const userId = session!.user.id;
+
+	const onViewConversation = async (
+		conversationId: string,
+		seenLastMessage: boolean | undefined,
+	) => {
 		router.push({
 			query: {
 				conversationId,
 			},
 		});
+
+		if (seenLastMessage) return;
 	};
 
 	return (
@@ -67,6 +77,7 @@ const ConversationWrapper: React.FC = () => {
 				<ConversationList
 					onViewConversation={onViewConversation}
 					conversations={data?.getConversations || []}
+					userId={userId}
 				/>
 			)}
 		</Box>

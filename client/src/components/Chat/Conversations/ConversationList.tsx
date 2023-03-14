@@ -6,13 +6,18 @@ import ConversationItem from './ConversationItem';
 import ConversationModal from './Modal';
 
 type ConversationListProps = {
-	onViewConversation: (conversationId: string) => void;
+	onViewConversation: (
+		conversationId: string,
+		seenLastMessage: boolean,
+	) => void;
 	conversations: _ConversationPopulated[];
+	userId: string;
 };
 
 const ConversationList: React.FC<ConversationListProps> = ({
 	onViewConversation,
 	conversations,
+	userId,
 }) => {
 	const router = useRouter();
 
@@ -45,14 +50,25 @@ const ConversationList: React.FC<ConversationListProps> = ({
 			<ConversationModal onClose={onClose} isOpen={isOpen} />
 
 			<Stack gap={1}>
-				{conversations.map((conversation) => (
-					<ConversationItem
-						key={conversation.id}
-						onClick={() => onViewConversation(conversation.id)}
-						conversation={conversation}
-						isSelected={conversation.id === router.query.conversationId}
-					/>
-				))}
+				{conversations.map((conversation) => {
+					const participant = conversation.participants.find(
+						//@ts-expect-error
+						(p) => p.user.id === userId,
+					);
+
+					return (
+						<ConversationItem
+							key={conversation.id}
+							onClick={() =>
+								onViewConversation(conversation.id, participant.seenLastMessage)
+							}
+							conversation={conversation}
+							isSelected={conversation.id === router.query.conversationId}
+							seenLastMessage={participant.seenLastMessage}
+							userId={userId}
+						/>
+					);
+				})}
 			</Stack>
 		</Box>
 	);

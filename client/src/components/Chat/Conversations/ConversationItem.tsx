@@ -12,7 +12,6 @@ import {
 } from '@chakra-ui/react';
 import { formatRelative } from 'date-fns';
 import enUS from 'date-fns/locale/en-US';
-import { useSession } from 'next-auth/react';
 import React, { useState } from 'react';
 import { AiOutlineEdit } from 'react-icons/ai';
 import { BiLogOut } from 'react-icons/bi';
@@ -32,9 +31,10 @@ interface ConversationItemProps {
 	// onEditConversation?: () => void;
 	// onLeaveConversation?: (conversation: ConversationPopulated) => void;
 	conversation: _ConversationPopulated;
-	// hasSeenLatestMessage: boolean | undefined;
 	isSelected: boolean;
+	seenLastMessage: boolean | undefined;
 	// selectedConversationId?: string;
+	userId: string;
 }
 
 const ConversationItem: React.FC<ConversationItemProps> = ({
@@ -43,15 +43,12 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
 	// onEditConversation,
 	// onLeaveConversation,
 	conversation,
-	// hasSeenLatestMessage,
 	isSelected,
+	seenLastMessage,
 	// selectedConversationId,
+	userId,
 }) => {
-	const { data: session } = useSession();
-
 	const [menuOpen, setMenuOpen] = useState(false);
-
-	const userId = session!.user.id;
 
 	const handleClick = (ev: React.MouseEvent) => {
 		switch (ev.type) {
@@ -123,9 +120,11 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
 				</MenuList>
 			</Menu>
 
-			<Flex position='absolute' left='-4px'>
-				{true && <GoPrimitiveDot fontSize={18} color='#3D84F7' />}
-			</Flex>
+			{!seenLastMessage && (
+				<Flex position='absolute' left='-4px'>
+					{true && <GoPrimitiveDot fontSize={18} color='#3D84F7' />}
+				</Flex>
+			)}
 
 			<Flex align='center' gap={2} overflow='hidden' width='100%'>
 				<Avatar size='md' />
