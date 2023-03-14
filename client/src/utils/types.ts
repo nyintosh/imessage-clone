@@ -1,10 +1,17 @@
-import { ConversationPopulated } from '../../../backend/src/utils/types';
+import {
+	ConversationPopulated,
+	MessagePopulated,
+} from '../../../server/src/utils/types';
 
 /**
- * Conversation
+ * Conversations
  */
 
 export type _ConversationPopulated = ConversationPopulated;
+
+export type GetConversationsData = {
+	getConversations: ConversationPopulated[];
+};
 
 export type CreateConversationData = {
 	createConversation: {
@@ -12,17 +19,62 @@ export type CreateConversationData = {
 	};
 };
 
-export type CreateConversationInput = {
+export type CreateConversationArgs = {
 	participantIds: string[];
 };
 
-export type GetConversationsData = {
-	getConversations: ConversationPopulated[];
+export type ConversationCreatedSubscriptionData = {
+	subscriptionData: {
+		data: {
+			conversationCreated: _ConversationPopulated;
+		};
+	};
 };
 
 /**
- * User
+ * Messages
  */
+
+export type _MessagePopulated = MessagePopulated;
+
+export type GetMessagesData = {
+	getMessages: MessagePopulated[];
+};
+
+export type GetMessagesArgs = {
+	conversationId: string;
+};
+
+export type SendMEssageData = {
+	sendMessage: boolean;
+};
+
+export type SendMessageArgs = {
+	id: string;
+	conversationId: string;
+	senderId: string;
+	body: string;
+};
+
+export type MessageSentSubscriptionData = {
+	subscriptionData: {
+		data: {
+			messageSent: MessagePopulated;
+		};
+	};
+};
+
+/**
+ * Users
+ */
+
+export type SearchUsersData = {
+	searchUsers: SearchedUser[];
+};
+
+export type SearchUsersArgs = {
+	username: string;
+};
 
 export type CreateUsernameData = {
 	createUsername: {
@@ -30,15 +82,7 @@ export type CreateUsernameData = {
 	};
 };
 
-export type CreateUsernameInput = {
-	username: string;
-};
-
-export type SearchUsersData = {
-	searchUsers: SearchedUser[];
-};
-
-export type SearchUsersInput = {
+export type CreateUsernameArgs = {
 	username: string;
 };
 

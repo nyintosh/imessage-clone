@@ -1,16 +1,10 @@
 import { gql } from '@apollo/client';
+import { MessageFields } from './message';
 
-const ConversationFields = `
+export const ConversationFields = `
 	id
 	lastMessage {
-		id
-		body
-		sender {
-			id
-			image
-			username
-		}
-		createdAt
+		${MessageFields}
 	}
 	participants {
 		seenLastMessage

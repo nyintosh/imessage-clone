@@ -1,11 +1,11 @@
 import ConversationOperation from '@/graphql/operations/conversation';
 import UserOperations from '@/graphql/operations/user';
 import {
+	CreateConversationArgs,
 	CreateConversationData,
-	CreateConversationInput,
 	SearchedUser,
+	SearchUsersArgs,
 	SearchUsersData,
-	SearchUsersInput,
 } from '@/utils/types';
 import { useLazyQuery, useMutation } from '@apollo/client';
 import {
@@ -40,19 +40,19 @@ const ConversationModal: React.FC<ConversationModalProps> = ({
 	const router = useRouter();
 
 	const [searchUsers, { data: searchedUsers, loading: isSearchingUser }] =
-		useLazyQuery<SearchUsersData, SearchUsersInput>(
+		useLazyQuery<SearchUsersData, SearchUsersArgs>(
 			UserOperations.Queries.searchUsers,
 		);
 
 	const [createConversation, { loading: isCreatingConversation }] = useMutation<
 		CreateConversationData,
-		CreateConversationInput
+		CreateConversationArgs
 	>(ConversationOperation.Mutations.createConversation);
 
 	const [participants, setParticipants] = useState<SearchedUser[]>([]);
 	const [username, setUsername] = useState('');
 
-	const { id: activeUserId } = session!.user;
+	const { id: userId } = session!.user;
 
 	const onSearchUsers = (ev: React.FormEvent) => {
 		ev.preventDefault();
@@ -72,7 +72,7 @@ const ConversationModal: React.FC<ConversationModalProps> = ({
 		try {
 			const { data } = await createConversation({
 				variables: {
-					participantIds: [activeUserId, ...participants.map((p) => p.id)],
+					participantIds: [userId, ...participants.map((p) => p.id)],
 				},
 			});
 

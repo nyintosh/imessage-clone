@@ -51,7 +51,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
 
 	const [menuOpen, setMenuOpen] = useState(false);
 
-	const { id: activeUserId } = session!.user;
+	const userId = session!.user.id;
 
 	const handleClick = (ev: React.MouseEvent) => {
 		switch (ev.type) {
@@ -141,7 +141,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
 						whiteSpace='nowrap'
 						overflow='hidden'
 					>
-						{formatUsernames(activeUserId, conversation.participants)}
+						{formatUsernames(conversation.participants, userId)}
 					</Text>
 
 					{conversation.lastMessage && (
@@ -153,7 +153,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
 								textOverflow='ellipsis'
 								overflow='hidden'
 							>
-								{conversation.latestMessage.body}
+								{conversation.lastMessage.body}
 							</Text>
 						</Box>
 					)}

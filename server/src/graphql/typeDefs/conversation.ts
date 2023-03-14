@@ -1,4 +1,6 @@
-const typeDefs = `#graphql
+import { gql } from 'graphql-tag';
+
+const typeDefs = gql`
 	scalar Date
 
 	type Query {
@@ -24,7 +26,7 @@ const typeDefs = `#graphql
 	type CreateConversationResponse {
 		conversationId: String
 	}
-	
+
 	type Participant {
 		id: String
 		seenLastMessage: Boolean

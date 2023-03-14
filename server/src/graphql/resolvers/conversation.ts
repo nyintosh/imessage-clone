@@ -20,7 +20,7 @@ const resolvers = {
 				throw new GraphQLError('Not authorized!');
 			}
 
-			const { id: activeUserId } = session.user;
+			const activeUserId = session.user.id;
 
 			try {
 				return await prisma.conversation.findMany({
@@ -56,7 +56,7 @@ const resolvers = {
 				throw new GraphQLError('Not authorized!');
 			}
 
-			const { id: activeUserId } = session.user;
+			const activeUserId = session.user.id;
 
 			try {
 				const conversation = await prisma.conversation.create({

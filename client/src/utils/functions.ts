@@ -1,11 +1,11 @@
-import { ParticipantPopulated } from '../../../backend/src/utils/types';
+import { ParticipantPopulated } from '../../../server/src/utils/types';
 
 export const formatUsernames = (
-	activeUserId: string,
 	participants: ParticipantPopulated[],
+	userId: string,
 ): string => {
 	const usernames = participants
-		.filter(({ user }) => user.id !== activeUserId)
+		.filter(({ user }) => user.id !== userId)
 		.map(({ user }) => user.username)
 		.join(', ');
 

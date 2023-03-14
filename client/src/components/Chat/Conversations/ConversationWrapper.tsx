@@ -1,5 +1,9 @@
+import SkeletonLoader from '@/components/common/SkeletonLoader';
 import ConversationOperations from '@/graphql/operations/conversation';
-import { GetConversationsData, _ConversationPopulated } from '@/utils/types';
+import {
+	ConversationCreatedSubscriptionData,
+	GetConversationsData,
+} from '@/utils/types';
 import { useQuery } from '@apollo/client';
 import { Box } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
@@ -9,7 +13,7 @@ import ConversationList from './ConversationList';
 const ConversationWrapper: React.FC = () => {
 	const router = useRouter();
 
-	const { data, subscribeToMore } = useQuery<GetConversationsData>(
+	const { subscribeToMore, data, loading } = useQuery<GetConversationsData>(
 		ConversationOperations.Queries.getConversations,
 	);
 
@@ -18,17 +22,9 @@ const ConversationWrapper: React.FC = () => {
 			document: ConversationOperations.Subscriptions.conversationCreated,
 			updateQuery: (
 				prev,
-				{
-					subscriptionData,
-				}: {
-					subscriptionData: {
-						data: {
-							conversationCreated: _ConversationPopulated;
-						};
-					};
-				},
+				{ subscriptionData }: ConversationCreatedSubscriptionData,
 			) => {
-				if (!subscriptionData.data) return prev;
+				if (!subscriptionData?.data) return prev;
 
 				const newConversation = subscriptionData.data.conversationCreated;
 
@@ -58,15 +54,21 @@ const ConversationWrapper: React.FC = () => {
 				base: router.query.conversationId ? 'none' : 'flex',
 				md: 'flex',
 			}}
-			width={{ base: '100%', md: '400px' }}
 			bg='whiteAlpha.50'
+			flexDirection='column'
+			gap={4}
 			px={3}
 			py={6}
+			width={{ base: '100%', md: '340px' }}
 		>
-			<ConversationList
-				onViewConversation={onViewConversation}
-				conversations={data?.getConversations || []}
-			/>
+			{loading ? (
+				<SkeletonLoader count={3} height='80px' />
+			) : (
+				<ConversationList
+					onViewConversation={onViewConversation}
+					conversations={data?.getConversations || []}
+				/>
+			)}
 		</Box>
 	);
 };

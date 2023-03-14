@@ -1,5 +1,5 @@
 import UserOperation from '@/graphql/operations/user';
-import { CreateUsernameData, CreateUsernameInput } from '@/utils/types';
+import { CreateUsernameArgs, CreateUsernameData } from '@/utils/types';
 import { useMutation } from '@apollo/client';
 import {
 	Box,
@@ -23,7 +23,7 @@ const Auth: React.FC<IAuthProps> = ({ reloadSession }) => {
 
 	const [createUsername, { loading }] = useMutation<
 		CreateUsernameData,
-		CreateUsernameInput
+		CreateUsernameArgs
 	>(UserOperation.Mutations.createUsername);
 
 	const [username, setUsername] = useState('');

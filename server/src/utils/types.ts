@@ -6,6 +6,7 @@ import {
 	conversationPopulated,
 	participantPopulated,
 } from '../graphql/resolvers/conversation.js';
+import { messagePopulated } from '../graphql/resolvers/message.js';
 
 /**
  * Server Configs
@@ -43,6 +44,25 @@ export type ConversationPopulated = Prisma.ConversationGetPayload<{
 export type ParticipantPopulated = Prisma.ConversationParticipantGetPayload<{
 	include: typeof participantPopulated;
 }>;
+
+/**
+ * Messages
+ */
+
+export type MessagePopulated = Prisma.MessageGetPayload<{
+	include: typeof messagePopulated;
+}>;
+
+export type SendMessageArgs = {
+	id: string;
+	conversationId: string;
+	senderId: string;
+	body: string;
+};
+
+export type SentMessageSubscriptionPayload = {
+	messageSent: MessagePopulated;
+};
 
 /**
  * Users

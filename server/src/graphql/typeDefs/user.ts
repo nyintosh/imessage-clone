@@ -1,4 +1,6 @@
-const typeDefs = `#graphql
+import { gql } from 'graphql-tag';
+
+const typeDefs = gql`
 	type Query {
 		searchUsers(username: String): [User]
 	}

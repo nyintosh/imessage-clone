@@ -16,7 +16,7 @@ const resolvers = {
 				throw new GraphQLError('Not authorized!');
 			}
 
-			const { username: activeUsername } = session.user;
+			const activeUsername = session.user.username;
 
 			try {
 				const users = await prisma.user.findMany({
@@ -51,7 +51,7 @@ const resolvers = {
 				throw new GraphQLError('Not authorized!');
 			}
 
-			const { id: userId } = session.user;
+			const activeUserId = session.user.id;
 
 			try {
 				const isUserExist = await prisma?.user.findUnique({
@@ -66,7 +66,7 @@ const resolvers = {
 
 				await prisma?.user.update({
 					where: {
-						id: userId,
+						id: activeUserId,
 					},
 					data: {
 						username,
