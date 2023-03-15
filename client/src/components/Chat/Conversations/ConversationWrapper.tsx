@@ -3,12 +3,16 @@ import ConversationOperations from '@/graphql/operations/conversation';
 import {
 	ConversationCreatedSubscriptionData,
 	GetConversationsData,
+	MarkConversationAsReadArgs,
+	MarkConversationAsReadData,
 } from '@/utils/types';
-import { useQuery } from '@apollo/client';
+import { gql, useMutation, useQuery } from '@apollo/client';
 import { Box } from '@chakra-ui/react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
 import { useEffect } from 'react';
+import { toast } from 'react-hot-toast';
+import { ParticipantPopulated } from '../../../../../server/src/utils/types';
 import ConversationList from './ConversationList';
 
 const ConversationWrapper: React.FC = () => {
@@ -19,6 +23,11 @@ const ConversationWrapper: React.FC = () => {
 	const { subscribeToMore, data, loading } = useQuery<GetConversationsData>(
 		ConversationOperations.Queries.getConversations,
 	);
+
+	const [markConversationAsRead] = useMutation<
+		MarkConversationAsReadData,
+		MarkConversationAsReadArgs
+	>(ConversationOperations.Mutations.markConversationAsRead);
 
 	const subscribeToNewConversations = () => {
 		subscribeToMore({
@@ -56,6 +65,73 @@ const ConversationWrapper: React.FC = () => {
 		});
 
 		if (seenLastMessage) return;
+
+		try {
+			await markConversationAsRead({
+				variables: {
+					conversationId,
+					userId,
+				},
+				optimisticResponse: {
+					markConversationAsRead: true,
+				},
+				update: (cache) => {
+					const participantFrag = cache.readFragment<{
+						participants: ParticipantPopulated[];
+					}>({
+						id: `Conversation:${conversationId}`,
+						fragment: gql`
+							fragment participants on Conversation {
+								participants {
+									seenLastMessage
+									user {
+										id
+										image
+										username
+									}
+								}
+							}
+						`,
+					});
+
+					if (!participantFrag) return;
+
+					const participants = [...participantFrag.participants];
+
+					const userParticipantIdx = participants.findIndex(
+						(p) => p.user.id === userId,
+					);
+
+					if (userParticipantIdx === -1) return;
+
+					const userParticipant = participants[userParticipantIdx];
+
+					participants[userParticipantIdx] = {
+						...userParticipant,
+						seenLastMessage: true,
+					};
+
+					cache.writeFragment({
+						id: `Conversation:${conversationId}`,
+						fragment: gql`
+							fragment participants on Conversation {
+								participants
+							}
+						`,
+						data: {
+							participants,
+						},
+					});
+				},
+			});
+		} catch (error) {
+			let err = error as any;
+
+			console.log(
+				`ConversationWrapper.onViewConversation() - Error: ${err?.message}`,
+			);
+			toast.error(err?.message);
+		}
 	};
 
 	return (

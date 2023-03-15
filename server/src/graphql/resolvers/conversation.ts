@@ -87,6 +87,45 @@ const resolvers = {
 				throw new GraphQLError('Error creating conversation');
 			}
 		},
+		markConversationAsRead: async (
+			_: any,
+			args: { conversationId: string; userId: string },
+			context: GraphQLContext,
+		): Promise<boolean> => {
+			const { conversationId, userId } = args;
+			const { prisma, session } = context;
+
+			if (!session?.user) {
+				throw new GraphQLError('Not authorized!');
+			}
+
+			try {
+				const participant = await prisma.conversationParticipant.findFirst({
+					where: {
+						conversationId,
+						userId,
+					},
+				});
+
+				await prisma.conversationParticipant.update({
+					where: {
+						id: participant!.id,
+					},
+					data: {
+						seenLastMessage: true,
+					},
+				});
+
+				return true;
+			} catch (error) {
+				const err = error as any;
+
+				console.log(
+					`Mutation.markConversationAsRead() - Error: ${err?.message}`,
+				);
+				throw new GraphQLError('Error creating conversation');
+			}
+		},
 	},
 	Subscription: {
 		conversationCreated: {

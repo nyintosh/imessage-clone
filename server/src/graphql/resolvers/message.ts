@@ -95,10 +95,6 @@ const resolvers = {
 					},
 				});
 
-				if (!participant) {
-					throw new GraphQLError('Participant does not exist');
-				}
-
 				const conversation = await prisma.conversation.update({
 					where: {
 						id: conversationId,
@@ -108,7 +104,7 @@ const resolvers = {
 						participants: {
 							update: {
 								where: {
-									id: participant.id,
+									id: participant!.id,
 								},
 								data: {
 									seenLastMessage: true,

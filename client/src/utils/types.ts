@@ -31,6 +31,15 @@ export type ConversationCreatedSubscriptionData = {
 	};
 };
 
+export type MarkConversationAsReadData = {
+	markConversationAsRead: boolean;
+};
+
+export type MarkConversationAsReadArgs = {
+	conversationId: string;
+	userId: string;
+};
+
 /**
  * Messages
  */
