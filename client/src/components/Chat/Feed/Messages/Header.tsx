@@ -9,12 +9,12 @@ import React from 'react';
 
 type MessagesHeaderProps = {
 	conversationId: string;
-	userId: string;
+	sessionUserId: string;
 };
 
 const MessagesHeader: React.FC<MessagesHeaderProps> = ({
 	conversationId,
-	userId,
+	sessionUserId,
 }) => {
 	const router = useRouter();
 
@@ -57,7 +57,7 @@ const MessagesHeader: React.FC<MessagesHeaderProps> = ({
 				<Stack direction='row'>
 					<Text color='whiteAlpha.600'>To: </Text>
 					<Text fontWeight={600}>
-						{formatUsernames(conversation.participants, userId)}
+						{formatUsernames(conversation.participants, sessionUserId)}
 					</Text>
 				</Stack>
 			)}

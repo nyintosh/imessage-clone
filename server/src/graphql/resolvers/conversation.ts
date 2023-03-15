@@ -1,9 +1,11 @@
 import { Prisma } from '@prisma/client';
 import { GraphQLError } from 'graphql';
 import { withFilter } from 'graphql-subscriptions';
+import { isUserConversationParticipant } from '../../utils/functions.js';
 import {
 	ConversationCreatedSubscriptionPayload,
 	ConversationPopulated,
+	ConversationUpdatedSubscriptionPayload,
 	GraphQLContext,
 } from '../../utils/types.js';
 
@@ -74,7 +76,9 @@ const resolvers = {
 				});
 
 				pubsub.publish('CONVERSATION_CREATED', {
-					conversationCreated: conversation,
+					conversationCreated: {
+						conversation,
+					},
 				});
 
 				return {
@@ -138,9 +142,37 @@ const resolvers = {
 					context: GraphQLContext,
 				) => {
 					const { session } = context;
-					const { participants } = payload.conversationCreated;
-					const isUserParticipant = participants.some(
-						({ userId }) => userId === session?.user?.id,
+					const { participants } = payload.conversationCreated.conversation;
+
+					const activeUserId = session!.user!.id;
+
+					const isUserParticipant = isUserConversationParticipant(
+						participants,
+						activeUserId,
+					);
+
+					return isUserParticipant;
+				},
+			),
+		},
+		conversationUpdated: {
+			subscribe: withFilter(
+				(_: any, __: any, { pubsub }: GraphQLContext) =>
+					pubsub.asyncIterator(['CONVERSATION_UPDATED']),
+				(
+					payload: ConversationUpdatedSubscriptionPayload,
+					_: any,
+					context: GraphQLContext,
+				) => {
+					const { session } = context;
+
+					const { participants } = payload.conversationUpdated.conversation;
+
+					const activeUserId = session!.user!.id;
+
+					const isUserParticipant = isUserConversationParticipant(
+						participants,
+						activeUserId,
 					);
 
 					return isUserParticipant;

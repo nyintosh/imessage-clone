@@ -34,7 +34,15 @@ export type SubscriptionContext = Context & {
  */
 
 export type ConversationCreatedSubscriptionPayload = {
-	conversationCreated: ConversationPopulated;
+	conversationCreated: {
+		conversation: ConversationPopulated;
+	};
+};
+
+export type ConversationUpdatedSubscriptionPayload = {
+	conversationUpdated: {
+		conversation: ConversationPopulated;
+	};
 };
 
 export type ConversationPopulated = Prisma.ConversationGetPayload<{

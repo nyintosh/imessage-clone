@@ -10,8 +10,8 @@ const FeedWrapper: React.FC = () => {
 
 	const router = useRouter();
 
-	const userId = session!.user.id;
 	const { conversationId } = router.query;
+	const sessionUserId = session!.user!.id;
 
 	return (
 		<Flex
@@ -21,9 +21,15 @@ const FeedWrapper: React.FC = () => {
 		>
 			{conversationId && typeof conversationId === 'string' ? (
 				<>
-					<MessagesHeader conversationId={conversationId} userId={userId} />
+					<MessagesHeader
+						conversationId={conversationId}
+						sessionUserId={sessionUserId}
+					/>
 
-					<Messages conversationId={conversationId} userId={userId} />
+					<Messages
+						conversationId={conversationId}
+						sessionUserId={sessionUserId}
+					/>
 
 					<MessagesInput conversationId={conversationId} session={session!} />
 				</>

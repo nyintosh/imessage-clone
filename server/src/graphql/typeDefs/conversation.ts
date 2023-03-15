@@ -13,7 +13,8 @@ const typeDefs = gql`
 	}
 
 	type Subscription {
-		conversationCreated: Conversation
+		conversationCreated: ConversationCreatedSubscriptionPayload
+		conversationUpdated: ConversationUpdatedSubscriptionPayload
 	}
 
 	type Conversation {
@@ -24,14 +25,22 @@ const typeDefs = gql`
 		updatedAt: Date
 	}
 
-	type CreateConversationResponse {
-		conversationId: String
-	}
-
 	type Participant {
 		id: String
 		seenLastMessage: Boolean
 		user: User
+	}
+
+	type CreateConversationResponse {
+		conversationId: String
+	}
+
+	type ConversationCreatedSubscriptionPayload {
+		conversation: Conversation
+	}
+
+	type ConversationUpdatedSubscriptionPayload {
+		conversation: Conversation
 	}
 `;
 

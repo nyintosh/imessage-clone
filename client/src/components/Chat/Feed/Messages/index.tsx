@@ -13,10 +13,13 @@ import MessageItem from './Item';
 
 type MessagesProps = {
 	conversationId: string;
-	userId: string;
+	sessionUserId: string;
 };
 
-const Messages: React.FC<MessagesProps> = ({ conversationId, userId }) => {
+const Messages: React.FC<MessagesProps> = ({
+	conversationId,
+	sessionUserId,
+}) => {
 	const {
 		subscribeToMore,
 		data: messages,
@@ -45,7 +48,7 @@ const Messages: React.FC<MessagesProps> = ({ conversationId, userId }) => {
 				return {
 					...prev,
 					getMessages:
-						newMessage.sender.id !== userId
+						newMessage.sender.id !== sessionUserId
 							? [newMessage, ...prev.getMessages]
 							: prev.getMessages,
 				};
@@ -73,7 +76,7 @@ const Messages: React.FC<MessagesProps> = ({ conversationId, userId }) => {
 						<MessageItem
 							key={message.id}
 							message={message}
-							sendByMe={message.sender.id === userId}
+							sendByMe={message.sender.id === sessionUserId}
 						/>
 					))}
 				</Flex>

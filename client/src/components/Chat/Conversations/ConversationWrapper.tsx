@@ -2,11 +2,12 @@ import SkeletonLoader from '@/components/common/SkeletonLoader';
 import ConversationOperations from '@/graphql/operations/conversation';
 import {
 	ConversationCreatedSubscriptionData,
+	ConversationUpdatedSubscriptionData,
 	GetConversationsData,
 	MarkConversationAsReadArgs,
 	MarkConversationAsReadData,
 } from '@/utils/types';
-import { gql, useMutation, useQuery } from '@apollo/client';
+import { gql, useMutation, useQuery, useSubscription } from '@apollo/client';
 import { Box } from '@chakra-ui/react';
 import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/router';
@@ -20,6 +21,9 @@ const ConversationWrapper: React.FC = () => {
 
 	const router = useRouter();
 
+	const { conversationId } = router.query;
+	const sessionUserId = session!.user!.id;
+
 	const { subscribeToMore, data, loading } = useQuery<GetConversationsData>(
 		ConversationOperations.Queries.getConversations,
 	);
@@ -29,16 +33,28 @@ const ConversationWrapper: React.FC = () => {
 		MarkConversationAsReadArgs
 	>(ConversationOperations.Mutations.markConversationAsRead);
 
-	const subscribeToNewConversations = () => {
-		subscribeToMore({
-			document: ConversationOperations.Subscriptions.conversationCreated,
-			updateQuery: (
-				prev,
-				{ subscriptionData }: ConversationCreatedSubscriptionData,
-			) => {
-				if (!subscriptionData?.data) return prev;
+	useSubscription<ConversationUpdatedSubscriptionData>(
+		ConversationOperations.Subscriptions.conversationUpdated,
+		{
+			onData: ({ client, data: { data } }) => {
+				if (!data) return;
 
-				const newConversation = subscriptionData.data.conversationCreated;
+				const newConversation = data.conversationUpdated.conversation;
+
+				if (newConversation.id === conversationId) {
+					onViewConversation(conversationId as string, false);
+				}
+			},
+		},
+	);
+
+	const subscribeToNewConversations = () => {
+		subscribeToMore<ConversationCreatedSubscriptionData>({
+			document: ConversationOperations.Subscriptions.conversationCreated,
+			updateQuery: (prev, { subscriptionData: { data } }) => {
+				if (!data) return prev;
+
+				const newConversation = data.conversationCreated.conversation;
 
 				return {
 					...prev,
@@ -51,8 +67,6 @@ const ConversationWrapper: React.FC = () => {
 	useEffect(() => {
 		subscribeToNewConversations();
 	}, []);
-
-	const userId = session!.user.id;
 
 	const onViewConversation = async (
 		conversationId: string,
@@ -70,7 +84,7 @@ const ConversationWrapper: React.FC = () => {
 			await markConversationAsRead({
 				variables: {
 					conversationId,
-					userId,
+					userId: sessionUserId,
 				},
 				optimisticResponse: {
 					markConversationAsRead: true,
@@ -99,7 +113,7 @@ const ConversationWrapper: React.FC = () => {
 					const participants = [...participantFrag.participants];
 
 					const userParticipantIdx = participants.findIndex(
-						(p) => p.user.id === userId,
+						(p) => p.user.id === sessionUserId,
 					);
 
 					if (userParticipantIdx === -1) return;
@@ -137,7 +151,7 @@ const ConversationWrapper: React.FC = () => {
 	return (
 		<Box
 			display={{
-				base: router.query.conversationId ? 'none' : 'flex',
+				base: conversationId ? 'none' : 'flex',
 				md: 'flex',
 			}}
 			bg='whiteAlpha.50'
@@ -145,7 +159,10 @@ const ConversationWrapper: React.FC = () => {
 			gap={4}
 			px={3}
 			py={6}
-			width={{ base: '100%', md: '340px' }}
+			width={{
+				base: '100%',
+				md: '340px',
+			}}
 		>
 			{loading ? (
 				<SkeletonLoader count={3} height='80px' />
@@ -153,7 +170,7 @@ const ConversationWrapper: React.FC = () => {
 				<ConversationList
 					onViewConversation={onViewConversation}
 					conversations={data?.getConversations || []}
-					userId={userId}
+					sessionUserId={sessionUserId}
 				/>
 			)}
 		</Box>

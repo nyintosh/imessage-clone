@@ -24,10 +24,14 @@ export type CreateConversationArgs = {
 };
 
 export type ConversationCreatedSubscriptionData = {
-	subscriptionData: {
-		data: {
-			conversationCreated: _ConversationPopulated;
-		};
+	conversationCreated: {
+		conversation: _ConversationPopulated;
+	};
+};
+
+export type ConversationUpdatedSubscriptionData = {
+	conversationUpdated: {
+		conversation: _ConversationPopulated;
 	};
 };
 

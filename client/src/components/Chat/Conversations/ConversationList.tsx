@@ -11,13 +11,13 @@ type ConversationListProps = {
 		seenLastMessage: boolean,
 	) => void;
 	conversations: _ConversationPopulated[];
-	userId: string;
+	sessionUserId: string;
 };
 
 const ConversationList: React.FC<ConversationListProps> = ({
 	onViewConversation,
 	conversations,
-	userId,
+	sessionUserId,
 }) => {
 	const router = useRouter();
 
@@ -53,7 +53,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
 				{conversations.map((conversation) => {
 					const participant = conversation.participants.find(
 						//@ts-expect-error
-						(p) => p.user.id === userId,
+						(p) => p.user.id === sessionUserId,
 					);
 
 					return (
@@ -65,7 +65,7 @@ const ConversationList: React.FC<ConversationListProps> = ({
 							conversation={conversation}
 							isSelected={conversation.id === router.query.conversationId}
 							seenLastMessage={participant.seenLastMessage}
-							userId={userId}
+							sessionUserId={sessionUserId}
 						/>
 					);
 				})}

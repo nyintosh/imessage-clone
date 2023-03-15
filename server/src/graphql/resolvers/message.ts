@@ -129,9 +129,11 @@ const resolvers = {
 					messageSent: newMessage,
 				});
 
-				// pubsub.publish('CONVERSATION_UPDATED', {
-				// 	conversationUpdated: conversation,
-				// });
+				pubsub.publish('CONVERSATION_UPDATED', {
+					conversationUpdated: {
+						conversation,
+					},
+				});
 
 				return true;
 			} catch (error) {

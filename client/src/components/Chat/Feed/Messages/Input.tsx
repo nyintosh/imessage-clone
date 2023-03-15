@@ -21,9 +21,7 @@ const MessagesInput: React.FC<MessagesInputProps> = ({
 	conversationId,
 	session,
 }) => {
-	const {
-		user: { id: userId, image: userImage, username },
-	} = session!;
+	const { user: sessionUser } = session!;
 
 	const [sendMessage] = useMutation<SendMessageData, SendMessageArgs>(
 		MessageOperations.Mutation.sendMessage,
@@ -67,9 +65,9 @@ const MessagesInput: React.FC<MessagesInputProps> = ({
 								{
 									id: newMessage.id,
 									sender: {
-										id: userId,
-										image: userImage,
-										username,
+										id: sessionUser.id,
+										image: sessionUser.image,
+										username: sessionUser.username,
 									},
 									body: newMessage.body,
 									createdAt: new Date(),

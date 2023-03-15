@@ -34,7 +34,7 @@ interface ConversationItemProps {
 	isSelected: boolean;
 	seenLastMessage: boolean | undefined;
 	// selectedConversationId?: string;
-	userId: string;
+	sessionUserId: string;
 }
 
 const ConversationItem: React.FC<ConversationItemProps> = ({
@@ -46,7 +46,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
 	isSelected,
 	seenLastMessage,
 	// selectedConversationId,
-	userId,
+	sessionUserId,
 }) => {
 	const [menuOpen, setMenuOpen] = useState(false);
 
@@ -140,7 +140,7 @@ const ConversationItem: React.FC<ConversationItemProps> = ({
 						whiteSpace='nowrap'
 						overflow='hidden'
 					>
-						{formatUsernames(conversation.participants, userId)}
+						{formatUsernames(conversation.participants, sessionUserId)}
 					</Text>
 
 					{conversation.lastMessage && (
