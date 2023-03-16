@@ -5,13 +5,13 @@ datasource db {
 
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "darwin", "darwin-arm64"]
+  binaryTargets = ["native", "darwin"]
 }
 
 model Account {
   id                String  @id @default(auto()) @map("_id") @db.ObjectId
   providerAccountId String
-  userId            String  @db.ObjectId
+  userId            String
   access_token      String? @db.String
   expires_at        Int?
   id_token          String? @db.String
@@ -29,7 +29,7 @@ model Account {
 
 model Session {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId       String   @db.ObjectId
+  userId       String
   sessionToken String   @unique
   expires      DateTime
 

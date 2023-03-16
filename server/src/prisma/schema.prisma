@@ -5,13 +5,13 @@ datasource db {
 
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "darwin", "darwin-arm64"]
+  binaryTargets = ["native", "darwin"]
 }
 
 model Account {
   id                String  @id @default(auto()) @map("_id") @db.ObjectId
   providerAccountId String
-  userId            String  @db.ObjectId
+  userId            String
   access_token      String? @db.String
   expires_at        Int?
   id_token          String? @db.String
@@ -29,7 +29,7 @@ model Account {
 
 model Session {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId       String   @db.ObjectId
+  userId       String
   sessionToken String   @unique
   expires      DateTime
 
@@ -61,7 +61,7 @@ model VerificationToken {
 
 model Conversation {
   id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  lastMessageId String?  @unique @db.ObjectId
+  lastMessageId String?  @unique
   createdAt     DateTime @default(now())
   updatedAt     DateTime @updatedAt
 
@@ -72,7 +72,7 @@ model Conversation {
 
 model ConversationParticipant {
   id              String  @id @default(auto()) @map("_id") @db.ObjectId
-  conversationId  String  @db.ObjectId
+  conversationId  String
   userId          String  @db.ObjectId
   seenLastMessage Boolean
 
@@ -82,8 +82,8 @@ model ConversationParticipant {
 
 model Message {
   id             String   @id @default(auto()) @map("_id") @db.ObjectId
-  conversationId String   @db.ObjectId
-  senderId       String   @db.ObjectId
+  conversationId String
+  senderId       String
   body           String
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt

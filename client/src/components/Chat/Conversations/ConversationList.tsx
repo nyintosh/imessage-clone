@@ -1,7 +1,7 @@
 import { _ConversationPopulated } from '@/utils/types';
 import { Box, Stack, Text } from '@chakra-ui/react';
 import { useRouter } from 'next/router';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import ConversationItem from './ConversationItem';
 import ConversationModal from './Modal';
 
@@ -25,6 +25,14 @@ const ConversationList: React.FC<ConversationListProps> = ({
 
 	const setOpen = () => setIsOpen(!0);
 	const onClose = () => setIsOpen(!1);
+
+	const sortedConversations = useMemo(
+		() =>
+			[...conversations].sort(
+				(a, b) => b.updatedAt.valueOf() - a.updatedAt.valueOf(),
+			),
+		[conversations],
+	);
 
 	return (
 		<Box width='100%'>
@@ -50,9 +58,9 @@ const ConversationList: React.FC<ConversationListProps> = ({
 			<ConversationModal onClose={onClose} isOpen={isOpen} />
 
 			<Stack gap={1}>
-				{conversations.map((conversation) => {
+				{sortedConversations.map((conversation) => {
 					const participant = conversation.participants.find(
-						//@ts-expect-error
+						// @ts-expect-error
 						(p) => p.user.id === sessionUserId,
 					);
 
