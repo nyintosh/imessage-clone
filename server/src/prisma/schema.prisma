@@ -5,7 +5,7 @@ datasource db {
 
 generator client {
   provider      = "prisma-client-js"
-  binaryTargets = ["native", "darwin"]
+  binaryTargets = ["native", "darwin", "darwin-arm64"]
 }
 
 model Account {
@@ -48,6 +48,9 @@ model User {
   conversations ConversationParticipant[]
   messages      Message[]
   sessions      Session[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model VerificationToken {
@@ -60,14 +63,15 @@ model VerificationToken {
 }
 
 model Conversation {
-  id            String   @id @default(auto()) @map("_id") @db.ObjectId
-  lastMessageId String?  @unique
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id            String  @id @default(auto()) @map("_id") @db.ObjectId
+  lastMessageId String? @unique
 
-  lastMessage  Message?                  @relation(name: "lastMessage", fields: [lastMessageId], references: [id], onUpdate: NoAction, onDelete: NoAction)
-  messages     Message[]
   participants ConversationParticipant[]
+  lastMessage  Message?                  @relation(name: "conversationLastMessage", fields: [lastMessageId], references: [id], onUpdate: NoAction, onDelete: NoAction)
+  messages     Message[]                 @relation(name: "conversationMessages")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model ConversationParticipant {
@@ -81,14 +85,15 @@ model ConversationParticipant {
 }
 
 model Message {
-  id             String   @id @default(auto()) @map("_id") @db.ObjectId
+  id             String @id @default(auto()) @map("_id") @db.ObjectId
   conversationId String
   senderId       String
   body           String
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
 
-  conversation  Conversation  @relation(fields: [conversationId], references: [id])
-  isLastMessage Conversation? @relation(name: "lastMessage")
+  conversation  Conversation  @relation(name: "conversationMessages", fields: [conversationId], references: [id])
+  isLastMessage Conversation? @relation(name: "conversationLastMessage")
   sender        User          @relation(fields: [senderId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
