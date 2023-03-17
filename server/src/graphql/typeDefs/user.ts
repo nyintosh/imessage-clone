@@ -6,12 +6,7 @@ const typeDefs = gql`
 	}
 
 	type Mutation {
-		createUsername(username: String): CreateUsernameResponse
-	}
-
-	type CreateUsernameResponse {
-		error: String
-		success: Boolean
+		createUsername(username: String): Boolean
 	}
 
 	type User {

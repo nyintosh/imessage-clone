@@ -84,7 +84,3 @@ export type User = {
 	name: string;
 	username: string;
 };
-
-export type CreateUsernameResponse = {
-	success: boolean;
-};

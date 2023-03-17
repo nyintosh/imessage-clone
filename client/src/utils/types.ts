@@ -90,9 +90,7 @@ export type SearchUsersArgs = {
 };
 
 export type CreateUsernameData = {
-	createUsername: {
-		success: boolean;
-	};
+	createUsername: boolean;
 };
 
 export type CreateUsernameArgs = {

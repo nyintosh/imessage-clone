@@ -11,7 +11,7 @@ generator client {
 model Account {
   id                String  @id @default(auto()) @map("_id") @db.ObjectId
   providerAccountId String
-  userId            String
+  userId            String  @db.ObjectId
   access_token      String? @db.String
   expires_at        Int?
   id_token          String? @db.String
@@ -29,7 +29,7 @@ model Account {
 
 model Session {
   id           String   @id @default(auto()) @map("_id") @db.ObjectId
-  userId       String
+  userId       String   @db.ObjectId
   sessionToken String   @unique
   expires      DateTime
 
@@ -64,7 +64,7 @@ model VerificationToken {
 
 model Conversation {
   id            String  @id @default(auto()) @map("_id") @db.ObjectId
-  lastMessageId String? @unique
+  lastMessageId String? @unique @db.ObjectId
 
   participants ConversationParticipant[]
   lastMessage  Message?                  @relation(name: "conversationLastMessage", fields: [lastMessageId], references: [id], onUpdate: NoAction, onDelete: NoAction)
@@ -76,7 +76,7 @@ model Conversation {
 
 model ConversationParticipant {
   id              String  @id @default(auto()) @map("_id") @db.ObjectId
-  conversationId  String
+  conversationId  String  @db.ObjectId
   userId          String  @db.ObjectId
   seenLastMessage Boolean
 
@@ -86,8 +86,8 @@ model ConversationParticipant {
 
 model Message {
   id             String @id @default(auto()) @map("_id") @db.ObjectId
-  conversationId String
-  senderId       String
+  conversationId String @db.ObjectId
+  senderId       String @db.ObjectId
   body           String
 
   conversation  Conversation  @relation(name: "conversationMessages", fields: [conversationId], references: [id])

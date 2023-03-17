@@ -22,25 +22,31 @@ const resolvers = {
 				throw new GraphQLError('Not authorized!');
 			}
 
-			const activeUserId = session.user.id;
+			const sessionUserId = session.user.id;
 
 			try {
-				return await prisma.conversation.findMany({
+				const conversations = await prisma.conversation.findMany({
 					where: {
 						participants: {
 							some: {
 								userId: {
-									equals: activeUserId,
+									equals: sessionUserId,
 								},
 							},
 						},
 					},
 					include: conversationPopulated,
 				});
+
+				console.log(conversations);
+
+				return conversations;
 			} catch (error) {
 				const err = error as any;
 
-				console.log(`Query.conversations() - Error: ${err?.message}`);
+				console.log(
+					`ConversationQuery.conversations() - Error: ${err?.message}`,
+				);
 				throw new GraphQLError(err?.message);
 			}
 		},
@@ -58,7 +64,7 @@ const resolvers = {
 				throw new GraphQLError('Not authorized!');
 			}
 
-			const activeUserId = session.user.id;
+			const sessionUserId = session.user.id;
 
 			try {
 				const conversation = await prisma.conversation.create({
@@ -67,7 +73,7 @@ const resolvers = {
 							createMany: {
 								data: participantIds.map((pid) => ({
 									userId: pid,
-									seenLastMessage: pid === activeUserId,
+									seenLastMessage: pid === sessionUserId,
 								})),
 							},
 						},
@@ -87,7 +93,9 @@ const resolvers = {
 			} catch (error) {
 				const err = error as any;
 
-				console.log(`Mutation.createConversation() - Error: ${err?.message}`);
+				console.log(
+					`ConversationMutation.createConversation() - Error: ${err?.message}`,
+				);
 				throw new GraphQLError('Error creating conversation');
 			}
 		},
@@ -125,7 +133,7 @@ const resolvers = {
 				const err = error as any;
 
 				console.log(
-					`Mutation.markConversationAsRead() - Error: ${err?.message}`,
+					`ConversationMutation.markConversationAsRead() - Error: ${err?.message}`,
 				);
 				throw new GraphQLError('Error creating conversation');
 			}
@@ -144,11 +152,11 @@ const resolvers = {
 					const { session } = context;
 					const { participants } = payload.conversationCreated.conversation;
 
-					const activeUserId = session!.user!.id;
+					const sessionUserId = session!.user!.id;
 
 					const isUserParticipant = isUserConversationParticipant(
 						participants,
-						activeUserId,
+						sessionUserId,
 					);
 
 					return isUserParticipant;
@@ -168,11 +176,11 @@ const resolvers = {
 
 					const { participants } = payload.conversationUpdated.conversation;
 
-					const activeUserId = session!.user!.id;
+					const sessionUserId = session!.user!.id;
 
 					const isUserParticipant = isUserConversationParticipant(
 						participants,
-						activeUserId,
+						sessionUserId,
 					);
 
 					return isUserParticipant;

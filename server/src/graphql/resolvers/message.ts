@@ -24,7 +24,7 @@ const resolvers = {
 				throw new GraphQLError('Not authorized!');
 			}
 
-			const activeUserId = session.user.id;
+			const sessionUserId = session.user.id;
 			const conversation = await prisma.conversation.findUnique({
 				where: {
 					id: conversationId,
@@ -37,7 +37,7 @@ const resolvers = {
 			}
 
 			if (
-				!isUserConversationParticipant(conversation.participants, activeUserId)
+				!isUserConversationParticipant(conversation.participants, sessionUserId)
 			) {
 				throw new GraphQLError('Not authorized!');
 			}
@@ -57,7 +57,7 @@ const resolvers = {
 			} catch (error) {
 				const err = error as any;
 
-				console.log(`Query.getMessages() - Error: ${err?.message}`);
+				console.log(`MessageQuery.getMessages() - Error: ${err?.message}`);
 				throw new GraphQLError('Error sending message');
 			}
 		},
@@ -71,9 +71,9 @@ const resolvers = {
 			const { id, conversationId, senderId, body } = args;
 			const { prisma, pubsub, session } = context;
 
-			const activeUserId = session?.user?.id;
+			const sessionUserId = session?.user?.id;
 
-			if (!session?.user || activeUserId !== senderId) {
+			if (!session?.user || sessionUserId !== senderId) {
 				throw new GraphQLError('Not authorized!');
 			}
 
@@ -139,7 +139,7 @@ const resolvers = {
 			} catch (error) {
 				const err = error as any;
 
-				console.log(`Mutation.sendMessage() - Error: ${err?.message}`);
+				console.log(`MessageMutation.sendMessage() - Error: ${err?.message}`);
 				throw new GraphQLError('Error sending message');
 			}
 		},
