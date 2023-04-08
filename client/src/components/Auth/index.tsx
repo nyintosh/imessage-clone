@@ -86,7 +86,7 @@ const Auth: React.FC<IAuthProps> = ({ reloadSession }) => {
 						</Box>
 
 						<Text fontFamily='monospace' fontSize='3xl'>
-							iMessage Clone
+							iMessage GraphQL
 						</Text>
 
 						<Button

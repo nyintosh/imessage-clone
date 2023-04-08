@@ -1,7 +1,7 @@
 {
-	"name": "imessage-clone-web-server",
+	"name": "imessage-graphql-server",
 	"version": "1.0.0",
-	"description": "Apollo GraphQL Server for iMessage Clone Web Application",
+	"description": "Apollo GraphQL Server for iMessage GraphQL Application",
 	"main": "index.js",
 	"type": "module",
 	"engines": {

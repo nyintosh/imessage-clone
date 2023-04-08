@@ -1,6 +1,6 @@
-# iMessage Clone Web
+# iMessage GraphQL
 
-iMessage clone using Next.js Node.js with Apollo GraphQL server
+iMessage clone using Next.js Node.js with Apollo GraphQL Server
 
 ## Environment Variables
 

@@ -1,5 +1,5 @@
 {
-	"name": "imessage-clone-web-client",
+	"name": "imessage-graphql-client",
 	"version": "0.1.0",
 	"private": true,
 	"scripts": {
