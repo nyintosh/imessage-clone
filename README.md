@@ -31,13 +31,13 @@ To run this project, you will need to add the following environment variables to
 Clone the project
 
 ```bash
-  git clone git@github.com:nyintosh/iMessageCloneWeb.git
+  git clone git@github.com:nyintosh/imessage-graphql.git
 ```
 
 (or)
 
 ```bash
-  git clone https://github.com/nyintosh/iMessageCloneWeb.git
+  git clone https://github.com/nyintosh/imessage-graphql.git
 ```
 
 Go to the project directory
