@@ -6,7 +6,7 @@ iMessage clone using Next.js Node.js with Apollo GraphQL Server
 
 To run this project, you will need to add the following environment variables to your .env file
 
-> Inside server folder
+> Inside Server folder
 
 `CLIENT_ORIGIN`
 
