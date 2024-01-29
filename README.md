@@ -1,4 +1,4 @@
-# iMessage GraphQL
+# iMessage Clone
 
 iMessage clone using Next.js Node.js with Apollo GraphQL Server
 
